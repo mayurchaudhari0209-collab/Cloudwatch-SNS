@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#07111f">
+  <meta name="description" content="An interactive story explaining AWS CloudWatch alarms and Amazon SNS notifications.">
+  <title>CloudWatch × SNS — Build with Mayur</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="Build with Mayur home"><span class="brand-mark">M<span>+</span></span><span>BUILD WITH <b>MAYUR</b></span></a>
+    <div class="top-meta"><span class="live-dot"></span> INTERACTIVE LAB <span class="divider">/</span> AWS OBSERVABILITY</div>
+    <span class="simulation-pill"><span>●</span> SIMULATION MODE</span>
+  </header>
+
+  <main class="shell">
+    <section class="hero">
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="eyebrow-line"></span> CLOUDWATCH + AMAZON SNS</div>
+        <h1>Every second counts.<br><span>Every alert matters.</span></h1>
+        <p>Follow Ravi's online shop as it hits a CPU crisis — and watch CloudWatch detect the problem while SNS sends the alert.</p>
+        <div class="hero-actions">
+          <button class="btn btn-primary" id="startBtn"><span>▶</span> Start story</button>
+          <button class="btn btn-ghost" id="architectureBtn"><span>⌘</span> Show architecture</button>
+        </div>
+        <div class="hero-foot"><span class="check">✓</span> Beginner-friendly <span class="tiny-divider"></span><span class="check">✓</span> No AWS account needed</div>
+      </div>
+      <div class="hero-art" aria-label="Illustration of a monitored cloud server">
+        <div class="orbit orbit-a"></div><div class="orbit orbit-b"></div>
+        <div class="cloud-shape"><span class="cloud-core">☁</span><span class="cloud-label">AWS CLOUD</span></div>
+        <div class="orbit-node node-one">EC2</div><div class="orbit-node node-two">CW</div><div class="orbit-node node-three">SNS</div>
+        <div class="art-spark spark-one"></div><div class="art-spark spark-two"></div><div class="art-spark spark-three"></div>
+        <div class="art-caption"><span class="live-dot"></span> SYSTEM WATCHING <b>24/7</b></div>
+      </div>
+    </section>
+
+    <section class="story-bar">
+      <div><span class="section-kicker">RAVI'S SHOP · INCIDENT SIMULATOR</span><h2 id="chapterTitle">01 / The shop opens</h2></div>
+      <div class="story-progress"><div class="progress-track"><span id="progressFill"></span></div><span id="progressText">1 of 8 chapters</span></div>
+      <div class="chapter-controls"><button class="icon-btn" id="prevBtn" aria-label="Previous step">←</button><button class="icon-btn" id="nextBtn" aria-label="Next step">→</button></div>
+    </section>
+
+    <section class="dashboard-grid">
+      <article class="panel architecture-panel" id="architecture">
+        <div class="panel-head"><div><span class="section-kicker">01 · LIVE SYSTEM MAP</span><h3>Monitoring pipeline</h3></div><span class="mini-badge"><span class="live-dot"></span> SIMULATED</span></div>
+        <p class="panel-subtitle">Follow the signal from Ravi's server to his inbox.</p>
+        <div class="pipeline" id="pipeline">
+          <div class="pipeline-node active" data-service="ec2"><div class="service-icon ec2-icon">▣</div><div><b>EC2 Web Server</b><small>Ravi's online shop</small></div><span class="node-status" id="ec2Status">RUNNING</span></div>
+          <div class="connector"><span class="flow-particle"></span><span class="connector-label">CPU metrics</span></div>
+          <div class="pipeline-node" data-service="cloudwatch"><div class="service-icon cw-icon">◔</div><div><b>CloudWatch</b><small>Measures CPU usage</small></div><span class="node-status">WATCHING</span></div>
+          <div class="connector"><span class="flow-particle"></span><span class="connector-label">Metric evaluation</span></div>
+          <div class="pipeline-node" data-service="alarm"><div class="service-icon alarm-icon">♢</div><div><b>CloudWatch Alarm</b><small>Threshold: CPU &gt; 80%</small></div><span class="node-status" id="alarmNodeStatus">OK</span></div>
+          <div class="connector"><span class="flow-particle"></span><span class="connector-label">Publish message</span></div>
+          <div class="pipeline-node" data-service="sns"><div class="service-icon sns-icon">➤</div><div><b>Amazon SNS</b><small>Alert delivery service</small></div><span class="node-status" id="snsStatus">READY</span></div>
+          <div class="connector"><span class="flow-particle"></span><span class="connector-label">Email subscription</span></div>
+          <div class="pipeline-node" data-service="email"><div class="service-icon email-icon">✉</div><div><b>Ravi's inbox</b><small>Email notification</small></div><span class="node-status" id="emailStatus">WAITING</span></div>
+        </div>
+        <div class="architecture-note"><span class="note-icon">i</span><span><b>Real AWS behavior:</b> CloudWatch evaluates metric data; an alarm action can publish to an SNS topic. Email delivery requires a confirmed subscription.</span></div>
+      </article>
+
+      <article class="panel metrics-panel">
+        <div class="panel-head"><div><span class="section-kicker">02 · SERVER HEALTH</span><h3>CPU utilization</h3></div><span class="status-pill status-normal" id="healthStatus">NORMAL</span></div>
+        <div class="metric-number"><strong id="cpuValue">25</strong><span>%</span><div class="metric-change" id="cpuCaption">● Healthy load</div></div>
+        <div class="chart-wrap"><div class="chart-ylabels"><span>100%</span><span>80%</span><span>60%</span><span>40%</span><span>0%</span></div><div class="chart-area"><div class="threshold-line"><span>ALARM THRESHOLD 80%</span></div><svg id="cpuChart" viewBox="0 0 440 180" preserveAspectRatio="none" role="img" aria-label="CPU utilization history chart"><defs><linearGradient id="chartFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#3dd9f5" stop-opacity=".3"/><stop offset="100%" stop-color="#3dd9f5" stop-opacity="0"/></linearGradient></defs><path id="chartArea" d="M0 135 L440 135 L440 180 L0 180 Z" fill="url(#chartFill)"/><polyline id="chartLine" points="0,135 440,135" fill="none" stroke="#47d9f1" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div class="chart-legend"><span><i class="legend-dot cyan"></i> CPU usage</span><span><i class="legend-dash"></i> 80% threshold</span><span id="chartWindow">Last 5 readings</span></div>
+        <div class="metric-stats"><div><span>ALARM THRESHOLD</span><b>80%</b></div><div><span>INSTANCE</span><b>EC2 · web-01</b></div><div><span>ALARM STATE</span><b id="alarmStateText">OK</b></div></div>
+      </article>
+    </section>
+
+    <section class="lower-grid">
+      <article class="panel story-panel">
+        <div class="panel-head"><div><span class="section-kicker">03 · THE STORY</span><h3 id="storyHeading">A promising start</h3></div><span class="chapter-number" id="chapterNumber">01</span></div>
+        <p id="storyText">Ravi launches his online shop on an EC2 instance. Customers can browse products, and the server is running comfortably.</p>
+        <div class="story-callout" id="storyCallout"><span>✦</span><div><b>Why it matters</b><p>Healthy systems are easier to keep healthy when you can see what they are doing.</p></div></div>
+        <div class="story-actions"><button class="btn btn-primary" id="nextStoryBtn">Next chapter <span>→</span></button><button class="btn btn-ghost" id="pauseBtn">Ⅱ Pause</button><button class="btn btn-ghost" id="resetBtn">↻ Reset</button></div>
+      </article>
+      <article class="panel terminal-panel">
+        <div class="panel-head"><div><span class="section-kicker">04 · EVENT STREAM</span><h3>Operations terminal</h3></div><span class="terminal-live"><span class="live-dot"></span> LIVE FEED</span></div>
+        <div class="terminal-top"><div class="terminal-dots"><i></i><i></i><i></i></div><span>ravi-shop / monitoring.log</span><button id="clearLogBtn" title="Clear terminal">CLEAR</button></div>
+        <div class="terminal-output" id="terminalOutput" aria-live="polite"><p><time>12:00:01</time> <span class="log-info">[INFO]</span> Monitoring simulator initialized.</p><p><time>12:00:02</time> <span class="log-ok">[OK]</span> EC2 instance web-01 is running.</p><p><time>12:00:03</time> <span class="log-info">[INFO]</span> CloudWatch is watching CPU metrics.</p></div>
+        <div class="terminal-prompt"><span>›</span> <span id="terminalPrompt">Waiting for next event...</span><i class="cursor"></i></div>
+      </article>
+    </section>
+
+    <section class="control-deck panel">
+      <div><span class="section-kicker">CONTROL ROOM</span><h3>Drive the incident</h3><p>Change the simulated server state and observe the response.</p></div>
+      <div class="control-buttons"><button class="btn btn-outline" id="highCpuBtn">⚡ Trigger high CPU</button><button class="btn btn-outline" id="resolveBtn">✓ Resolve issue</button><button class="btn btn-outline" id="snsTestBtn">✉ Test SNS notification</button><button class="btn btn-ghost" id="autoBtn">▶ Auto play</button></div>
+      <div class="mode-switch"><span>EXPLANATION MODE</span><div class="segmented"><button class="selected" id="beginnerMode">Beginner</button><button id="devopsMode">DevOps</button></div><span id="modeHint">Simple language · real-life analogies</span></div>
+    </section>
+
+    <section class="commands-section" id="commands">
+      <div class="section-heading"><div><span class="section-kicker">05 · TAKE IT TO AWS</span><h2>From simulation to <span>real commands.</span></h2><p>Examples for your own AWS environment. Replace every placeholder before running.</p></div><button class="btn btn-ghost" id="commandsToggle">Show commands <span>＋</span></button></div>
+      <div class="command-list" id="commandList" hidden>
+        <article class="command-card"><div><b>1. List CloudWatch alarms</b><p>See alarms configured in a region.</p></div><pre><code>aws cloudwatch describe-alarms --region YOUR_AWS_REGION</code></pre><button class="copy-btn" data-copy="aws cloudwatch describe-alarms --region YOUR_AWS_REGION">Copy</button></article>
+        <article class="command-card"><div><b>2. List available metrics</b><p>Find EC2 CPU utilization metrics.</p></div><pre><code>aws cloudwatch list-metrics --namespace AWS/EC2 --metric-name CPUUtilization --region YOUR_AWS_REGION</code></pre><button class="copy-btn" data-copy="aws cloudwatch list-metrics --namespace AWS/EC2 --metric-name CPUUtilization --region YOUR_AWS_REGION">Copy</button></article>
+        <article class="command-card"><div><b>3. Create an SNS topic</b><p>Creates a topic and returns its ARN.</p></div><pre><code>aws sns create-topic --name RaviShopAlerts --region YOUR_AWS_REGION</code></pre><button class="copy-btn" data-copy="aws sns create-topic --name RaviShopAlerts --region YOUR_AWS_REGION">Copy</button></article>
+        <article class="command-card"><div><b>4. Subscribe an email</b><p>Ravi must confirm the subscription from the email he receives.</p></div><pre><code>aws sns subscribe --topic-arn YOUR_SNS_TOPIC_ARN --protocol email --notification-endpoint YOUR_EMAIL_ADDRESS --region YOUR_AWS_REGION</code></pre><button class="copy-btn" data-copy="aws sns subscribe --topic-arn YOUR_SNS_TOPIC_ARN --protocol email --notification-endpoint YOUR_EMAIL_ADDRESS --region YOUR_AWS_REGION">Copy</button></article>
+        <article class="command-card"><div><b>5. Publish a test message</b><p>Tests the topic after subscription confirmation.</p></div><pre><code>aws sns publish --topic-arn YOUR_SNS_TOPIC_ARN --subject "Ravi Shop test alert" --message "This is a test notification." --region YOUR_AWS_REGION</code></pre><button class="copy-btn" data-copy='aws sns publish --topic-arn YOUR_SNS_TOPIC_ARN --subject "Ravi Shop test alert" --message "This is a test notification." --region YOUR_AWS_REGION'>Copy</button></article>
+        <article class="command-card"><div><b>6. Create a CPU alarm</b><p>Uses a 5-minute period and two evaluation periods above 80%.</p></div><pre><code>aws cloudwatch put-metric-alarm --alarm-name RaviShop-HighCPU --namespace AWS/EC2 --metric-name CPUUtilization --dimensions Name=InstanceId,Value=YOUR_EC2_INSTANCE_ID --statistic Average --period 300 --evaluation-periods 2 --datapoints-to-alarm 2 --threshold 80 --comparison-operator GreaterThanThreshold --alarm-actions YOUR_SNS_TOPIC_ARN --ok-actions YOUR_SNS_TOPIC_ARN --region YOUR_AWS_REGION</code></pre><button class="copy-btn" data-copy="aws cloudwatch put-metric-alarm --alarm-name RaviShop-HighCPU --namespace AWS/EC2 --metric-name CPUUtilization --dimensions Name=InstanceId,Value=YOUR_EC2_INSTANCE_ID --statistic Average --period 300 --evaluation-periods 2 --datapoints-to-alarm 2 --threshold 80 --comparison-operator GreaterThanThreshold --alarm-actions YOUR_SNS_TOPIC_ARN --ok-actions YOUR_SNS_TOPIC_ARN --region YOUR_AWS_REGION">Copy</button></article>
+        <div class="command-warning"><b>Before you run these:</b> Configure AWS CLI credentials securely and choose the correct region. Your IAM identity needs suitable CloudWatch and SNS permissions; creating or updating the alarm may also require permission for CloudWatch to publish to the SNS topic. Do not paste credentials into this page. EC2 basic monitoring intervals and detailed monitoring differ, so alarm periods should match your monitoring needs.</div>
+      </div>
+    </section>
+
+    <section class="takeaway">
+      <div class="takeaway-icon">✦</div><div><span class="section-kicker">THE DEVOPS TAKEAWAY</span><h2>Observe. Detect. Notify. Recover.</h2><p>CloudWatch helps you understand system health. Alarms identify conditions that need attention. SNS routes notifications to people or systems that can respond.</p></div><div class="completion-mark">✓</div>
+    </section>
+  </main>
+
+  <footer><a class="brand footer-brand" href="#"><span class="brand-mark">M<span>+</span></span><span>BUILD WITH <b>MAYUR</b></span></a><span>Made for curious builders · AWS learning simulation</span><a href="#commands">Explore CLI commands ↑</a></footer>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="script.js"></script>
+</body>
+</html>
